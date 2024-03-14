@@ -187,7 +187,7 @@ const UserPage = () => {
         };
 
         try {
-            const response = await axios.post(`http://127.0.0.1:5000/api/list/${listId}/task`, {
+            const response = await axios.post(`http://127.0.0.1:5000/api/task/add/${listId}`, {
                 title: newTask.title,
                 parent_id: parentId
             }, {

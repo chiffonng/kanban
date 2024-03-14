@@ -22,7 +22,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post('http://127.0.0.1:5000/api/v1/signup', {
+      const response = await axios.post('http://127.0.0.1:5000/api/signup', {
         email: email,
         password: password
       });
