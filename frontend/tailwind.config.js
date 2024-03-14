@@ -1,15 +1,35 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./src/**/*.{html,js}"],
-  theme: [
-    'cupcake',
-    'dracula'
-  ],
+  theme: {
+    fontFamily: {
+      sans: [
+        '-apple-system', 
+        'BlinkMacSystemFont', 
+        '"Segoe UI"', 
+        'Roboto', 
+        '"Helvetica Neue"', 
+        'Arial', 
+        'sans-serif', 
+        '"Apple Color Emoji"', 
+        '"Segoe UI Emoji"', 
+        '"Segoe UI Symbol"'
+      ],
+      serif: ['Merriweather', 'serif'],
+    },
+    extend: {
+      // theme extensions
+    },
+  },
   plugins: [
     require('@tailwindcss/forms'),
     require('daisyui')
   ],
   daisyui: {
+    theme: [
+      'cupcake',
+      'dracula'
+    ],
     themes: true, // enable color themes
     darkTheme: "dracula", // name of one of the included themes for dark mode
     base: true, // applies background color and foreground color for root element by default

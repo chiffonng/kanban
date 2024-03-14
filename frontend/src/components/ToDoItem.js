@@ -167,19 +167,21 @@ const ToDoItem = ({
 					</div>
 				)}
 
+				{/* Task Checkbox */}
 				<div>
 					<input
 						type="checkbox"
 						checked={status === "completed"}
 						onChange={status === "completed" ? undoComplete : markComplete}
-						className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+						className="h-4 w-4 rounded border-gray-300"
 					/>
-				</div>
-
+        </div>
+        
+        {/* Task Title */}
 				<div
-					className={`flex-grow ${
+					className={`text-base-content flex-grow ${
 						status === "completed"
-							? "line-through text-gray-400"
+							? "line-through text-gray-800"
 							: "text-gray-800"
 					}`}
 				>
@@ -187,18 +189,20 @@ const ToDoItem = ({
 				</div>
 
 				{/* Edit, Remove, Add subtasks icons */}
-				<div className="flex space-x-1 mt-1 group-hover:opacity-100 group-hover:visible opacity-0 invisible">
+				<div className="flex space-x-1 mt-1">
 					<button
 						onClick={() => editTask(taskId, title, status)}
-						className="focus:outline-none"
+            className="btn btn-ghost btn-xs p-1 focus:ring focus:ring-opacity-50"
+            title="Edit task name"
 					>
-						<PencilSquareIcon className="h-5 w-5 hover:text-gray-500" />
+						<PencilSquareIcon className="h-5 w-5 text-base-content" />
 					</button>
 					<button
 						onClick={() => handleRemoveSubTask(listId, taskId)}
-						className="focus:outline-none"
+            className="btn btn-ghost btn-xs p-1 focus:ring focus:ring-opacity-50"
+            title="Delete task"
 					>
-						<TrashIcon className="h-5 w-5 hover:text-gray-500" />
+						<TrashIcon className="h-5 w-5 text-base-content" />
 					</button>
 					{level < 3 && (
 						<button
@@ -209,9 +213,10 @@ const ToDoItem = ({
 									taskId
 								)
 							}
-							className="focus:outline-none"
+              className="btn btn-ghost btn-xs p-1 focus:ring focus:ring-opacity-50"
+              title="Add subtask"
 						>
-							<PlusIcon className="h-5 w-5 hover:text-gray-500" />
+							<PlusIcon className="h-5 w-5 text-base-content" />
 						</button>
 					)}
 				</div>
