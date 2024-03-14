@@ -1,14 +1,9 @@
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import {
-	ChevronDownIcon,
-	ChevronRightIcon,
-	PencilSquareIcon,
-	TrashIcon,
-	PlusIcon,
-} from "@heroicons/react/24/outline";
+import { useNavigate } from "react-router-dom";
+import { TaskService } from "../services/TaskService";
+import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import PropTypes from "prop-types";
+import TaskActions from "./TaskActions";
 
 const ToDoItem = ({
 	listId,
@@ -21,31 +16,49 @@ const ToDoItem = ({
 	const [title, setTitle] = useState(item.title);
 	const [status, setStatus] = useState(item.status);
 	const [isExpanded, setIsExpanded] = useState(true);
-	const navigate = useNavigate();
 	const [subTasks, setSubTasks] = useState([]);
 
-	// This code is used to fetch subtasks from the server and store them in the subTasks state variable.
-	// It is used to fetch all subtasks when the task component is loaded, and when a task is deleted.
+	const navigate = useNavigate();
+
 	useEffect(() => {
-		const fetchSubTasks = async () => {
-			try {
-				const response = await axios.get(
-					`http://127.0.0.1:5000/api/task/${taskId}/subtasks`
-				);
-				if (response.status === 200) {
-					setSubTasks(response.data);
-				} else {
-					console.error("Error fetching subtasks:", response.data.error);
-				}
-			} catch (error) {
-				console.error(
-					"An error occurred when fetching subtasks:",
-					error.message
-				);
-			}
-		};
-		fetchSubTasks();
+		loadSubTasks();
 	}, [taskId, onRemoveTask]);
+
+	const loadSubTasks = async () => {
+		try {
+			const data = await TaskService.fetchSubTasks(taskId, navigate);
+			setSubTasks(data);
+		} catch (error) {
+			console.error("Error loading subtasks:", error);
+		}
+	};
+
+	const handleEditTitle = async (taskId, newTitle, status) => {
+		try {
+			await TaskService.editTask(taskId, newTitle, status, navigate);
+			setTitle(newTitle);
+		} catch (error) {
+			console.error("Error updating task title:", error);
+		}
+	};
+
+	const markComplete = async () => {
+		try {
+			await TaskService.updateTaskStatus(taskId, "completed", navigate);
+			setStatus("completed");
+		} catch (error) {
+			console.error("Error updating task status:", error);
+		}
+	};
+
+	const undoComplete = async () => {
+		try {
+			await TaskService.updateTaskStatus(taskId, "pending", navigate);
+			setStatus("pending");
+		} catch (error) {
+			console.error("Error updating task status:", error);
+		}
+	};
 
 	const handleCreateSubTask = (listId, title, parentTaskId) => {
 		onCreateTask(listId, title, parentTaskId, (newSubTask) => {
@@ -56,96 +69,9 @@ const ToDoItem = ({
 	const handleRemoveSubTask = (listId, taskId) => {
 		onRemoveTask(listId, taskId, (oldSubTask) => {
 			setSubTasks((prevSubTasks) =>
-				prevSubTasks.filter((subTask) => subTask !== oldSubTask)
+				prevSubTasks.filter((subTask) => subTask.id !== oldSubTask.id)
 			);
 		});
-	};
-
-	// This code updates the task status in the database.
-	// It sends a PUT request to the server with the task ID and the new status,
-	// and if the request is successful, it updates the status in the local state.
-	const updateTaskStatus = async (newStatus) => {
-		try {
-			const response = await axios.put(
-				`http://127.0.0.1:5000/api/task/${taskId}`,
-				{
-					title: title, // keep the title unchanged
-					status: newStatus,
-				}
-			);
-
-			if (response.status === 200) {
-				setStatus(newStatus);
-			} else {
-				console.error("Error updating task status:", response.data.error);
-			}
-		} catch (error) {
-			console.error(
-				"An error occurred while updating task status:",
-				error.message
-			);
-			if (
-				error.response &&
-				error.response.status === 401 &&
-				error.response.data.error === "Token has expired"
-			) {
-				window.alert("Your token has expired. Please log in again.");
-				navigate("/login");
-			} else {
-				window.alert(
-					"There was an issue updating the task status. Please try again."
-				);
-			}
-		}
-	};
-
-	const markComplete = () => {
-		updateTaskStatus("completed");
-	};
-
-	const undoComplete = () => {
-		updateTaskStatus("pending");
-	};
-
-	// This function is called when the user clicks on the edit button for a task.
-	// It calls the backend to update the task with the new title, then updates the frontend state with the new title.
-	const editTask = async (taskId, title, status) => {
-		const newTitle = prompt("Edit task title", title);
-		if (newTitle) {
-			try {
-				// Call the backend to update the task
-				console.log("Task ID:", taskId);
-				const response = await axios.put(
-					`http://127.0.0.1:5000/api/task/${taskId}`,
-					{
-						title: newTitle,
-						status: status, // Assuming you want to send the current status
-					}
-				);
-
-				// Check if the task was successfully updated
-				if (response.status === 200) {
-					setTitle(newTitle); // Update the frontend state for title
-					// Optionally, update any other frontend states if required
-				} else {
-					// Handle any errors returned from the backend
-					console.error("Error updating task:", response.data.error);
-				}
-			} catch (error) {
-				// Handle any other errors (e.g., network errors)
-				console.error("An error occurred:", error.message);
-				if (
-					error.response &&
-					error.response.status === 401 &&
-					error.response.data.error === "Token has expired"
-				) {
-					window.alert("Your token has expired. Please log in again.");
-					navigate("/login");
-				} else {
-					window.alert("There was an issue moving the task. Please try again.");
-				}
-			}
-		}
 	};
 
 	return (
@@ -175,9 +101,9 @@ const ToDoItem = ({
 						onChange={status === "completed" ? undoComplete : markComplete}
 						className="h-4 w-4 rounded border-gray-300"
 					/>
-        </div>
-        
-        {/* Task Title */}
+				</div>
+
+				{/* Task Title */}
 				<div
 					className={`text-base-content flex-grow ${
 						status === "completed"
@@ -189,37 +115,16 @@ const ToDoItem = ({
 				</div>
 
 				{/* Edit, Remove, Add subtasks icons */}
-				<div className="flex space-x-1 mt-1">
-					<button
-						onClick={() => editTask(taskId, title, status)}
-            className="btn btn-ghost btn-xs p-1 focus:ring focus:ring-opacity-50"
-            title="Edit task name"
-					>
-						<PencilSquareIcon className="h-5 w-5 text-base-content" />
-					</button>
-					<button
-						onClick={() => handleRemoveSubTask(listId, taskId)}
-            className="btn btn-ghost btn-xs p-1 focus:ring focus:ring-opacity-50"
-            title="Delete task"
-					>
-						<TrashIcon className="h-5 w-5 text-base-content" />
-					</button>
-					{level < 3 && (
-						<button
-							onClick={() =>
-								handleCreateSubTask(
-									listId,
-									prompt("Enter subtask title"),
-									taskId
-								)
-							}
-              className="btn btn-ghost btn-xs p-1 focus:ring focus:ring-opacity-50"
-              title="Add subtask"
-						>
-							<PlusIcon className="h-5 w-5 text-base-content" />
-						</button>
-					)}
-				</div>
+				<TaskActions
+					taskId={taskId}
+					title={title}
+					status={status}
+					onEdit={handleEditTitle}
+					onRemove={() => handleRemoveSubTask(listId, taskId)}
+					onCreateSubTask={() =>
+						handleCreateSubTask(listId, prompt("Enter subtask title"), taskId)
+					}
+				/>
 			</div>
 
 			{isExpanded && subTasks && (

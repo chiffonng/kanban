@@ -1,10 +1,7 @@
 import React from "react";
 import ToDoItem from "./ToDoItem";
 import { Draggable } from "react-beautiful-dnd";
-import {
-	TrashIcon,
-	PencilSquareIcon,
-} from "@heroicons/react/24/outline";
+import { TrashIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 
 const ToDoList = ({
 	listId,
@@ -21,6 +18,14 @@ const ToDoList = ({
 			updateListTitle(listId, newListName);
 		}
 	};
+
+	const handleCreateTask = (listId, title, parentId, callback) =>
+		createTask(listId, title, parentId, callback);
+
+	const handleRemoveTask = (listId, taskId, callback) =>
+		removeTask(listId, taskId, callback);
+
+	const handleAddTask = () => createTask(listId, prompt("Enter task title"));
 
 	return (
 		<div className="card bg-base-200 shadow-md rounded-lg p-6 mt-10 min-w-[200px] w-full">
@@ -54,12 +59,8 @@ const ToDoList = ({
 									item={task}
 									level={1}
 									listId={listId}
-									onCreateTask={(listId, title, parentId, callback) =>
-										createTask(listId, title, parentId, callback)
-									}
-									onRemoveTask={(listId, taskId, callback) =>
-										removeTask(listId, taskId, callback)
-									}
+									onCreateTask={handleCreateTask}
+									onRemoveTask={handleRemoveTask}
 								/>
 							</div>
 						)}
@@ -69,7 +70,7 @@ const ToDoList = ({
 
 			<div className="mt-4">
 				<button
-					onClick={() => createTask(listId, prompt("Enter task title"))}
+					onClick={handleAddTask}
 					className="btn btn-primary text-sm flex py-1"
 				>
 					<p>Add Task</p>
