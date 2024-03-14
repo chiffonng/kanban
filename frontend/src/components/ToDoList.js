@@ -1,7 +1,8 @@
 import React from "react";
 import ToDoItem from "./ToDoItem";
 import { Draggable } from "react-beautiful-dnd";
-import { TrashIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+import TaskActions from "./TaskActions";
+import PropTypes from "prop-types";
 
 const ToDoList = ({
 	listId,
@@ -32,17 +33,12 @@ const ToDoList = ({
 			<div className="flex justify-between items-center mb-4">
 				<h2 className="text-xl font-semibold">{listName}</h2>
 
-				<div>
-					<button onClick={editListTitle} className="btn btn-ghost btn-xs">
-						<PencilSquareIcon className="h-5 w-5 text-base-content" />
-					</button>
-					<button
-						onClick={() => removeList(listId)}
-						className="btn btn-ghost btn-xs"
-					>
-						<TrashIcon className="h-5 w-5 text-base-content" />
-					</button>
-				</div>
+				<TaskActions
+					listId={listId}
+					removeList={removeList}
+					editListTitle={editListTitle}
+					handleAddTask={handleAddTask}
+				/>
 			</div>
 
 			<div className="space-y-2">
@@ -67,17 +63,18 @@ const ToDoList = ({
 					</Draggable>
 				))}
 			</div>
-
-			<div className="mt-4">
-				<button
-					onClick={handleAddTask}
-					className="btn btn-primary text-sm flex py-1"
-				>
-					<p>Add Task</p>
-				</button>
-			</div>
 		</div>
 	);
+};
+
+ToDoList.propTypes = {
+	listId: PropTypes.string.isRequired,
+	tasks: PropTypes.array.isRequired,
+	createTask: PropTypes.func.isRequired,
+	removeList: PropTypes.func.isRequired,
+	removeTask: PropTypes.func.isRequired,
+	listName: PropTypes.string.isRequired,
+	updateListTitle: PropTypes.func.isRequired,
 };
 
 export default ToDoList;

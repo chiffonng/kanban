@@ -105,10 +105,10 @@ const ToDoItem = ({
 
 				{/* Task Title */}
 				<div
-					className={`text-base-content flex-grow ${
+					className={`flex-grow ${
 						status === "completed"
-							? "line-through text-gray-800"
-							: "text-gray-800"
+							? "line-through text-gray-700 dark:text-gray-300"
+							: "text-gray-700 dark:text-gray-300"
 					}`}
 				>
 					{title}
