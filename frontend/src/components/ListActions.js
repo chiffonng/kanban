@@ -39,3 +39,5 @@ ListActions.propTypes = {
 	editListTitle: PropTypes.func.isRequired,
 	handleAddTask: PropTypes.func.isRequired,
 };
+
+export default ListActions;

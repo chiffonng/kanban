@@ -1,7 +1,7 @@
 import React from "react";
 import ToDoItem from "./ToDoItem";
 import { Draggable } from "react-beautiful-dnd";
-import TaskActions from "./TaskActions";
+import ListActions from "./ListActions";
 import PropTypes from "prop-types";
 
 const ToDoList = ({
@@ -33,7 +33,7 @@ const ToDoList = ({
 			<div className="flex justify-between items-center mb-4">
 				<h2 className="text-xl font-semibold">{listName}</h2>
 
-				<TaskActions
+				<ListActions
 					listId={listId}
 					removeList={removeList}
 					editListTitle={editListTitle}
