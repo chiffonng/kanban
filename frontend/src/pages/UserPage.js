@@ -1,10 +1,10 @@
+import React, { useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import axios from "axios";
 import UserContext from "../UserContext";
 import Header from "../components/Header";
 import ToDoList from "../components/ToDoList";
-import { useNavigate } from "react-router-dom";
-import React, { useState, useContext, useEffect } from "react";
-import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 const UserPage = () => {
 	const [lists, setLists] = useState([]);
@@ -47,7 +47,7 @@ const UserPage = () => {
 					error.response.data.error === "Token has expired"
 				) {
 					window.alert("Your token has expired. Please log in again.");
-					navigate("/login"); // assuming '/login' is your login route
+					navigate("/login");
 				} else {
 					window.alert(
 						"There was an issue fetching your lists. Please try again."
@@ -405,14 +405,14 @@ const UserPage = () => {
 				{user ? (
 					<>
 						<DragDropContext onDragEnd={handleOnDragEnd}>
-							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-start">
+							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4 justify-items-start">
 								{lists.map((list, index) => (
 									<Droppable key={list.id} droppableId={String(list.id)}>
 										{(provided) => (
 											<div
 												{...provided.droppableProps}
 												ref={provided.innerRef}
-												className="flex justify-center min-w-full"
+												className="flex flex-col w-full p-2"
 											>
 												<ToDoList
 													listId={list.id}
@@ -434,7 +434,7 @@ const UserPage = () => {
 						<div className="mt-8">
 							<button
 								onClick={addNewList}
-								className="btn btn-primary text-sm px-2 py-1" 
+								className="btn btn-primary text-sm px-2 py-1"
 							>
 								Add a new list
 							</button>

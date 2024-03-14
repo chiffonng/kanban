@@ -2,8 +2,9 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { AUTH_ROUTES } from "../utils/constants";
 
-const Signup = () => {
+const RegisterForm = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
@@ -24,13 +25,13 @@ const Signup = () => {
 		}
 
 		try {
-			const response = await axios.post("http://127.0.0.1:5000/api/signup", {
+			const response = await axios.post("http://127.0.0.1:5000/api/register", {
 				email: email,
 				password: password,
 			});
 
 			console.log("Signup successful:", response.data.message);
-			navigate("/login");
+			navigate(AUTH_ROUTES.LOGIN);
 		} catch (error) {
 			console.error("Signup error:", error.response.data.message);
 
@@ -45,14 +46,14 @@ const Signup = () => {
 		}
 	};
 
-	const handleSigninClick = () => {
-		navigate("/login");
+	const handleLoginClick = () => {
+		navigate(AUTH_ROUTES.LOGIN);
 	};
 
 	return (
 		<div className="flex h-screen justify-center items-center bg-gray-100">
 			<div className="card w-full max-w-md bg-base-100 shadow-xl p-6">
-				<h2 className="text-center text-2xl font-bold">Sign Up</h2>
+				<h2 className="text-center text-2xl font-bold">Register</h2>
 
 				<form className="form-control" onSubmit={handleSubmit}>
 					{/* Email Field */}
@@ -94,9 +95,9 @@ const Signup = () => {
 								)}
 							</button>
 						</div>
-          </div>
-          
-          {/* Confirm Password Field */}
+					</div>
+
+					{/* Confirm Password Field */}
 					<div className="form-control">
 						<label className="label" htmlFor="confirmPassword">
 							Confirm Password
@@ -126,15 +127,15 @@ const Signup = () => {
 
 					{/* Submit Button */}
 					<button type="submit" className="btn btn-primary mt-4">
-						Sign up
+						Register
 					</button>
 				</form>
 
 				<div className="text-center mt-4">
 					<p>
 						Already have an account?{" "}
-						<button onClick={handleSigninClick} className="link link-primary">
-							Sign in
+						<button onClick={handleLoginClick} className="link link-primary">
+							Login
 						</button>
 					</p>
 				</div>
@@ -143,4 +144,4 @@ const Signup = () => {
 	);
 };
 
-export default Signup;
+export default RegisterForm;

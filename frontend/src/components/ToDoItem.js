@@ -73,10 +73,22 @@ const ToDoItem = ({
 			);
 		});
 	};
+	const styles = {
+		taskContainer: `flex items-center justify-between space-x-2 group`,
+		taskMainContent: `flex-1 flex items-center space-x-2`,
+		taskTitle: `flex-grow ${
+			status === "completed"
+				? "line-through text-gray-700 dark:text-gray-300"
+				: "text-gray-700 dark:text-gray-300"
+		} overflow-hidden`,
+		taskActions: `flex-shrink-0 flex items-center space-x-1`, // Use this for your TaskActions component
+		subTaskList: `pl-2`,
+		subTaskItem: `pl-5 pb-1`,
+	};
 
 	return (
 		<div className="my-1">
-			<div className="flex items-start space-x-2 group">
+			<div className={styles.taskContainer}>
 				{/* if the task has children, show a chevron icon to expand/collapse the children. */}
 				{item.children && item.children.length > 0 && (
 					<div className="mt-1">
@@ -85,9 +97,9 @@ const ToDoItem = ({
 							className="focus:outline-none"
 						>
 							{isExpanded ? (
-								<ChevronDownIcon className="h-5 w-5 text-gray-500" />
+								<ChevronDownIcon className="h-3 w-3" />
 							) : (
-								<ChevronRightIcon className="h-5 w-5 text-gray-500" />
+								<ChevronRightIcon className="h-3 w-3" />
 							)}
 						</button>
 					</div>
@@ -104,33 +116,28 @@ const ToDoItem = ({
 				</div>
 
 				{/* Task Title */}
-				<div
-					className={`flex-grow ${
-						status === "completed"
-							? "line-through text-gray-700 dark:text-gray-300"
-							: "text-gray-700 dark:text-gray-300"
-					}`}
-				>
-					{title}
-				</div>
+				<div className={styles.taskTitle}>{title}</div>
 
 				{/* Edit, Remove, Add subtasks icons */}
-				<TaskActions
-					taskId={taskId}
-					title={title}
-					status={status}
-					onEdit={handleEditTitle}
-					onRemove={() => handleRemoveSubTask(listId, taskId)}
-					onCreateSubTask={() =>
-						handleCreateSubTask(listId, prompt("Enter subtask title"), taskId)
-					}
-				/>
+				<div className={styles.taskActions}>
+					<TaskActions
+						taskId={taskId}
+						title={title}
+						status={status}
+						onEdit={handleEditTitle}
+						onRemove={() => handleRemoveSubTask(listId, taskId)}
+						onCreateSubTask={() =>
+							handleCreateSubTask(listId, prompt("Enter subtask title"), taskId)
+						}
+					/>
+				</div>
 			</div>
 
+			{/* If the task is expanded and has children, show the children */}
 			{isExpanded && subTasks && (
-				<ul className="pl-2">
+				<ul className={styles.subTaskList}>
 					{subTasks.map((subTask) => (
-						<li key={subTask.id} className="pl-5 pb-1">
+						<li key={subTask.id} className={styles.subTaskItem}>
 							<ToDoItem
 								taskId={subTask.id}
 								item={subTask}

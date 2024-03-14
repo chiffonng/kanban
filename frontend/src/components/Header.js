@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import React, { useContext } from "react";
 import UserContext from "../UserContext";
 import axios from "axios";
+import { AUTH_ROUTES } from "../utils/constants";
 
 export default function Header() {
 	const { user, setUser } = useContext(UserContext);
@@ -41,10 +42,10 @@ export default function Header() {
 						</>
 					) : (
 						<>
-							<Link to="/signup" className="btn btn-primary">
-								Sign Up
+							<Link to={AUTH_ROUTES.REGISTER} className="btn btn-primary">
+								Register
 							</Link>
-							<Link to="/login" className="btn btn-primary">
+							<Link to={AUTH_ROUTES.LOGIN} className="btn btn-primary">
 								Log in
 							</Link>
 						</>

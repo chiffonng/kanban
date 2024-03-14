@@ -2,8 +2,9 @@ import axios from "axios";
 import UserContext from "../UserContext";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useContext } from "react";
+import { AUTH_ROUTES } from "../utils/constants";
 
-const Login = () => {
+const LoginForm = () => {
 	const navigate = useNavigate();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -24,10 +25,10 @@ const Login = () => {
 			if (response.data && response.data.access_token) {
 				// if login is successful
 				const token = response.data.access_token;
-        axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-        
-        // set the user with both email and token after successful login
-				setUser({ email: email, token: token }); 
+				axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+
+				// set the user with both email and token after successful login
+				setUser({ email: email, token: token });
 
 				// Store the token in localStorage for persistence
 				localStorage.setItem("jwtToken", token);
@@ -37,7 +38,7 @@ const Login = () => {
 			console.log("Logged in successfully:", response.data.message);
 
 			// Navigate to Userpage.js
-			navigate("/");
+			navigate(AUTH_ROUTES.USER);
 		} catch (error) {
 			console.error("Login error:", error.response?.data?.message);
 			if (
@@ -51,7 +52,7 @@ const Login = () => {
 	};
 
 	const handleRegisterClick = () => {
-		navigate("/signup"); // This will navigate the user to the Sign Up page
+		navigate(AUTH_ROUTES.REGISTER);
 	};
 
 	return (
@@ -92,7 +93,7 @@ const Login = () => {
 
 							<div className="form-control mt-4">
 								<button type="submit" className="btn btn-primary">
-									Sign In
+									Log In
 								</button>
 							</div>
 						</form>
@@ -115,4 +116,4 @@ const Login = () => {
 	);
 };
 
-export default Login;
+export default LoginForm;
