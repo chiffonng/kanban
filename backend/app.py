@@ -1,13 +1,15 @@
 import os
 
-from auth import jwt
-from database import db
 from flask import Flask, jsonify
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
 from jwt import ExpiredSignatureError
 
 from config import Config
+
+db = SQLAlchemy()
+jwt = JWTManager()
 
 
 def create_app(test_config=None):
@@ -21,26 +23,23 @@ def create_app(test_config=None):
     if test_config:
         app.config.update(test_config)
 
-    jwt.init_app(app)
     db.init_app(app)
+    jwt.init_app(app)
 
-    @app.errorhandler(ExpiredSignatureError)
-    def handle_expired_token(e):
-        return jsonify({"error": "Token has expired"}), 401
+    from auth import auth_bp
+    from lists import list_bp
+    from tasks import task_bp
 
-    from models import User
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(list_bp)
+    app.register_blueprint(task_bp)
 
     with app.app_context():
         db.create_all()
 
-    # blueprint for auth routes in our app
-    from auth import auth as auth_blueprint
-
-    app.register_blueprint(auth_blueprint)
-
-    from routes import api
-
-    app.register_blueprint(api)
+    @app.errorhandler(ExpiredSignatureError)
+    def handle_expired_token(e):
+        return jsonify({"error": "Token has expired"}), 401
 
     return app
 

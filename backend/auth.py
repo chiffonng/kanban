@@ -1,15 +1,15 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import JWTManager, create_access_token
-from database import db
+from flask_jwt_extended import create_access_token, get_jwt_identity
+
+from app import db
 from models import User
-
-auth = Blueprint("auth", __name__, url_prefix="/api/v1")
-
-# Setting up Flask-JWT-Extended
-jwt = JWTManager()
+from uri import API_ENDPOINT, AUTH_ENDPOINT, LOGIN_ENDPOINT, REGISTER_ENDPOINT
 
 
-@auth.route("/signup", methods=["POST"])
+auth_bp = Blueprint("auth", __name__, url_prefix=API_ENDPOINT)
+
+
+@auth_bp.route(REGISTER_ENDPOINT, methods=["POST"])
 def signup():
     data = request.get_json()
 
@@ -29,9 +29,9 @@ def signup():
     return jsonify({"message": "Successfully signed up! Please login."}), 201
 
 
-# This code is responsible for logging in a user.
-@auth.route("/login", methods=["POST"])
+@auth_bp.route(LOGIN_ENDPOINT, methods=["POST"])
 def login():
+    """Log in a user."""
     data = request.get_json()
 
     email = data["email"]
@@ -50,3 +50,8 @@ def login():
         jsonify({"message": "Logged in successfully!", "access_token": access_token}),
         200,
     )
+
+
+def get_current_user():
+    email = get_jwt_identity()
+    return User.query.filter_by(email=email).first()
